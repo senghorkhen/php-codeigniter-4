@@ -1,0 +1,147 @@
+pizza.php
+
+<?php namespace App\Controllers;
+use App\Models\PizzaModel;
+class Pizza extends BaseController
+{
+
+	public function listPizza()
+	{
+		$pizzaModel = new PizzaModel();
+		$data['pizzas'] = $pizzaModel->findAll();
+		return view('index',$data);
+		
+	}
+	public function index(){
+		$data = [];
+		if($this->request->getMethod() == "post"){
+			helper(['form']);
+			$rules = [
+				'name'=>'required',
+				'price'=>'required|min_length[1]|max_length[50]',
+				'ingredient'=>'required',
+				
+			];
+			
+				$pizzaModel = new PizzaModel();
+				$pizzaName = $this->request->getVar('name');
+				$pizzaPrice = $this->request->getVar('price')."$";
+				$pizzaIngredient = $this->request->getVar('ingredient');
+				$pizzaData = array(
+					'name'=>$pizzaName,
+					'price'=>$pizzaPrice,
+					'ingredient'=>$pizzaIngredient,
+				);
+				$pizzaModel->insert($pizzaData);
+				return redirect()->to('/');
+
+		
+		}
+	
+	}
+	public function deletePizza($id){
+		$pizzaModel = new PizzaModel();
+		$pizzaModel->delete($id);
+		return redirect()->to("/");
+	}
+	//--------------------------------------------------------------------
+
+}
+
+
+
+==========================================================================
+user.php
+<?php namespace App\Controllers;
+use App\Models\UserModel;
+class Users extends BaseController
+{
+	public function sigInAccount()
+	{
+		return view('auths/login');
+	}
+	public function registerAccount()
+	{
+		$data = [];
+		if($this->request->getMethod() == "post"){
+			helper(['form']);
+			$rules = [
+				'email'=>'required',
+				'password'=>'required|min_length[1]|max_length[50]',
+				'address'=>'required',
+				'role'=>'required',
+				
+			];
+			//  if($this->validate($rules)){
+				$userModel = new UserModel();
+				$userEmail = $this->request->getVar('email');
+				$userPassword = $this->request->getVar('password');
+				$userAddress = $this->request->getVar('address');
+				$userData = array(
+					'email'=>$userEmail ,
+					'password'=>$userPassword,
+					'address'=>$userAddress,
+				);
+				$userModel->insert($userData);
+				return redirect()->to('/');
+
+			// }else{
+			// 	$data['validation'] = $this->validator;
+			// 	return view('index',$data);
+			// }
+		}
+		return view('auths/register');
+
+	}
+
+	//--------------------------------------------------------------------
+
+}
+
+
+=====================================================================
+pizzaModel.php
+<?php namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PizzaModel extends Model
+{
+    protected $table      = 'pizza';
+    protected $primaryKey = 'id';
+    protected $returnType     = 'array';
+    protected $allowedFields = ['name','price','ingredient'];
+
+    public function createPizz($pizzaInfo){
+        $this->insert([
+            'name'=>$pizzaInfo['name'],
+            'price'=>$pizzaInfo['price'],
+            'ingredient'=>$pizzaInfo['ingredient'],
+        ]);
+    }
+    
+}
+
+===============================================
+userMel
+<?php namespace App\Models;
+
+use CodeIgniter\Model;
+
+class UserModel extends Model
+{
+    protected $table      = 'users';
+    protected $primaryKey = 'id';
+    protected $returnType     = 'array';
+    protected $allowedFields = ['email', 'password','address','role'];
+
+    public function registerUser($userInfo){
+        $this->insert([
+            'email'=>$userInfo['name'],
+            'password'=>$userInfo['password'],
+            'address'=>$userInfo['address'],
+            'role'=>$userInfo['role'],
+        ]);
+    }
+    
+}

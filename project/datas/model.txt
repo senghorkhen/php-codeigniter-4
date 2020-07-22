@@ -1,0 +1,41 @@
+<?php namespace App\Controllers;
+use App\Medels\DashboardModel;
+class User extends BaseController
+{
+    public function index()
+    {
+        $pizza = new PeperoniModel();
+        $data['listOfPizza'] = $pizza->findAll();
+        return view('index',$data);
+    }
+
+    public function addPizza()
+    {
+        helper(['form']);
+        $data = [];
+
+        if($this->request->getMethod() == 'post') {
+            $rules = [
+				'name' => 'required|alpha_numeric',
+				'ingredient'=>'required',
+				'price'=>'required|min_length[1]|max_length[50]|numeric',				
+            ];
+            if(!$this->validate($rules)){
+                $data['validation'] = $this->validator;
+                // return view('index', $data);
+            }else {
+                $pizza = new PeperoniModel();
+
+                $pizzaData = array(
+                    'name' => $this->request->getVar('name'),
+                    'ingredient' => $this->request->getVar('ingredient'),
+                    'price' => $this->request->getVar('price'),
+                );
+                $pizza->createPeperoni($pizzaData);
+                return redirect()->to('/dashboard');
+            }
+        }
+        return view('index', $data);
+    }
+	
+}

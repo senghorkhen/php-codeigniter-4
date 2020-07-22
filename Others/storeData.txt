@@ -1,0 +1,298 @@
+public function index()
+	{
+		return view('students/index');
+    }
+    
+    public function studentUpload()
+	{
+        // $file = $file->request->getFile('upload');
+        // if($file->getSize() > 0) {
+        //     // echo "File name: ". $file->getName();
+        //     // echo "File size: ". $file->getSize();
+        //     // echo "File type: ". $file->getExtension();
+        //     // echo "Random Name: ". $file->getRandomName();
+
+        //     $file->move('image', $file->getRandomName());
+        // }else {
+        //     echo "please Upload file first";
+        // }
+		return view('students/index');
+	}
+
+
+===============================================================================
+<h1>Single Upload File</h1>
+<form action="" method="post" enctype="multipart/form-data">
+    Photo: <input type="file" name="photo">
+    <input type="submit" value="Upload Photo">
+</form>
+
+=============================================================================
+ <li class="list-group-item d-flex justify-content-between align-items-center">
+                <?= $student['profile'] ?>
+                    <span class="badge badge-primary badge-pill">Province</span>
+                </li>
+
+
+================================================================================================
+<div class="form-group">
+                    <label for="province">Profile:</label>
+                    Photo: <input type="file" name="photo">
+                    <input type="submit" class="form-control" placeholder="Enter profile" id="profile" name="profile">
+                </div>
+
+
+-------------------------------------------------------------------------------------------------
+
+<ul class="list-group">
+            <strong>
+            <li">
+                <?= $student['name']?>
+            </li>
+            </strong>
+                <li>
+                <?= $student['email'] ?>
+                </li>
+                <li>
+                <?= $student['age'] ?>
+                </li>
+            </ul>
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+<div class="row">
+                <div class="col-12">
+                <span class="badge badge-danger badge-pill">Age=<?= $student['age'] ?></span>
+                </div>
+            </div>
+
+-----------------------------------upload images------------------------------------
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header"><h6>Register</h6></div>
+                <div class="card-body">
+                <form action="save" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="email">Username:</label>
+                    <input type="text" class="form-control" placeholder="Enter name" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" placeholder="Enter email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" class="form-control" placeholder="Enter age" id="age" name="age">
+                </div>
+                <div class="form-group">
+                    <label for="province">Profile:</label>
+                    <input type="file" class="form-control" id="profile" name="profile">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register New</button>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+<?= $this->endSection() ?>
+
+
+==============================index.php====================================================
+<?= $this->extend('layouts/layout') ?>
+
+<?= $this->section('crud-blog') ?>
+
+    <div class="container mt-5">
+    <style>
+        .container  {
+            background: #cccccc;
+        }
+        .icon{
+            margin-left: 450px;
+            display: flex;
+        }
+    </style>
+    <a href="/student/add" class="btn btn-info mt-3 text-right">Register</a>
+    <hr>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+            <div class="card mb-4">
+            <?php foreach($students as $student): ?>
+            <div class="card-header"></div>
+            <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                <?= $student['profile'] ?> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                <strong><h5><?= $student['name']?></h5></strong>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                <?= $student['email'] ?> / <span class="badge badge-danger">Age=<?= $student['age'] ?></span>
+                </div>
+            </div>   
+            <hr>
+                <div class="icon">
+                <a href="/student/remove/<?= $student['id'] ?>">
+                    <i class="material-icons text-danger">delete</i>
+                </a> 
+                <a href="/student/edit/<?= $student['id'] ?>">
+                    <li class="material-icons text-info">edit</li>
+                </a> 
+                </div>    
+            </div>
+            <?php endforeach ?>
+            </div>
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+<?= $this->endSection() ?>
+
+=====================style=====================================
+    <style>
+        .container  {
+            background: #cccccc;
+        }
+        .icon{
+            margin-left: 450px;
+            display: flex;
+        }
+    </style>
+
+======================insert image=================================
+
+     public function addStudent()
+	{
+        $student = new StudentModel();
+
+        $file = $this->request->getFile('profile');
+        if($file->getSize() > 0) {
+            $file->move('students', $file->getRandomName());
+        }else {
+            echo "Please Upload File First";
+        } 
+
+         $student->insert($_POST);
+        return redirect()->to('/student');
+    }
+
+=================================================rules================================
+public function addStudent()
+	{
+		helper(['form']);
+		$dataStudent = [];
+		$student = new StudentModel();
+		if($this->request->getMethod() == "post")
+		{
+			$rules = [
+				'name' => 'Required, alpha_numeric, min_length[3], max_length[20]',
+				'email' => 'Required, valid_email, min_length[6], max_length[50]',
+				'age' => 'required, max_length[3], numeric',
+				'profile' => 'required'
+			];
+			if(!$this->validate($rules)) {
+				$dataStudent['message'] = $this->validator;
+			}else {
+				// insert to database
+			}
+			
+			$student->insert($studentData);
+			$profile->move("images",$profileStudent);
+		}
+		return redirect()->to('/student',$dataStudent);
+	}
+===============================student=============================================
+    public function addStudent()
+	{
+		
+		helper(['form']);
+		$data = [];
+		if($this->request->getMethod() == "post")
+		{
+			$rules = [
+				'name' => 'Required, alpha_numeric, min_length[3], max_length[20]',
+				'email' => 'Required, valid_email, min_length[6], max_length[50]',
+				'age' => 'required, max_length[3], numeric',
+				'profile' => 'required'
+			];
+			if($this->validate($rules)) {
+				$student = new StudentModel();
+				// insert to database
+				$stuName = $this->request->getVar('name');
+				$stuEmail = $this->request->getVar('email');
+				$stuAge = $this->request->getVar('age');
+				$stuProfile = $this->request->getFile('profile');
+				$profileStudent = $stuProfile->getRandomName();
+
+				$studentData = array(
+					'name'=>$username,
+					'email'=>$email,
+					'age'=>$age,
+					'profile'=>$profileStudent
+				);
+				$profile->move("images",$profileStudent);
+				$student->createStu($studentData);
+
+			}else {
+				$dataStudent['messages'] = $this->validator;
+			}
+		}
+		return redirect()->to('/student',$data);
+	}
+
+====================================================validation error
+ 
+	// public function addStudent()
+	// {
+	// 	$student = new StudentModel();
+	// 	helper(['form']);
+	// 	$data = [];
+	// 	if($this->request->getMethod() == "post")
+	// 	{
+	// 		$rules = [
+	// 			'name' => 'required, alpha_numeric, min_length[3], max_length[20]',
+	// 			'email' => 'required, valid_email, min_length[6], max_length[50]',
+	// 			'age' => 'required, max_length[3], numeric',
+	// 			'profile' => 'required'
+	// 		];
+	// 		if($this->validate($rules))
+	// 		{
+	// 			// insert to database
+				
+	// 			$username = $this->request->getVar('name');
+	// 			$email = $this->request->getVar('email');
+	// 			$age = $this->request->getVar('age');
+	// 			$profile = $this->request->getFile('profile');
+	// 			$profileStudent = $profile->getRandomName();
+				
+	// 			$studentData = array(
+	// 				'name'=>$username,
+	// 				'email'=>$email,
+	// 				'age'=>$age,
+	// 				'profile'=>$profileStudent
+	// 			);
+	// 			$student->createStudent($studentData);
+	// 			// $student->insert($studentData);
+	// 			$profile->move("images",$profileStudent);
+
+	// 		}else {
+	// 			$data['messages'] = $this->validator;
+	// 			return view('students/addStudent',$data);
+	// 		}
+	// 	}
+	// 	// return redirect()->to('/student');
+	// }

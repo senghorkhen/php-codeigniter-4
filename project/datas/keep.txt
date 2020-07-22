@@ -1,0 +1,76 @@
+<hr>
+       <?php if(session()->get('success')): ?>
+        <div class="col-12">
+          <div class="alert alert-danger" role="alert">
+            <?= session()->get(success) ?> 
+          </div>
+        </div>
+       <?php endif; ?>
+
+============================================================
+helper(['form']);
+		$data = [];
+		if($this->request->getMethod() == 'post')
+		{
+			// do the validation
+			$rules = [
+				'email' =>'required|alpha_numeric|valid_email',
+				'password' => 'required|alpha_numeric_punct',
+			];
+			if(! $this->validate->getMethod() == 'post') {
+				$data['validation'] = $this->validator;
+			}else {
+
+			}
+		}
+
+
+========================================================================
+<tr>
+						<td class="pizzaName">Jack Pizza</td>
+						<td>Tomatoes, ham, cheese, peperoni</td>
+						<td class="text-success font-weight-bolder">15$</td>
+						<td>
+							<a href="" data-toggle="modal" data-target="#updatePizza"><i class="material-icons text-info" data-toggle="tooltip" title="Edit Pizza!" data-placement="left">edit</i></a>
+							<a href="" data-toggle="tooltip" title="Delete Pizza!" data-placement="right"><i class="material-icons text-danger">delete</i></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="pizzaName">Seiha Pizza</td>
+						<td>Tomatoes, ham, cheese, peperoni</td>
+						<td  class="text-success font-weight-bolder">1.5$</td>
+						<td>
+							<a href="" data-toggle="modal" data-target="#updatePizza"><i class="material-icons text-info" data-toggle="tooltip" title="Edit Pizza!" data-placement="left">edit</i></a>
+							<a href="" data-toggle="tooltip" title="Delete Pizza!" data-placement="right"><i class="material-icons text-danger">delete</i></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="pizzaName">Rady Pizza</td>
+						<td>Tomatoes, ham, cheese, peperoni</td>
+						<td  class="text-success font-weight-bolder">1500$</td>
+						<td>
+							<a href="" data-toggle="modal" data-target="#updatePizza"><i class="material-icons text-info" data-toggle="tooltip" title="Edit Pizza!" data-placement="left">edit</i></a>
+							<a href="" data-toggle="tooltip" title="Delete Pizza!" data-placement="right"><i class="material-icons text-danger">delete</i></a>
+						</td>
+					</tr>
+
+
+
+
+
+
+
+
+
+===========================================================
+<?php foreach($pizzas as $pizza): ?>
+					<tr>
+						<td><?= $pizza['name'] ?></td>
+						<td><?= $pizza['ingredient'] ?></td>
+						<td><?= $pizza['price'] ?></td>
+						<td>
+							<a href="" data-toggle="modal" data-target="#updatePizza"><i class="material-icons text-info" data-toggle="tooltip" title="Edit Pizza!" data-placement="left">edit</i></a>
+							<a href="" data-toggle="tooltip" title="Delete Pizza!" data-placement="right"><i class="material-icons text-danger">delete</i></a>
+						</td>
+					</tr>
+					<?php endforeach; ?>

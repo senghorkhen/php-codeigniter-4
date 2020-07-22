@@ -1,0 +1,185 @@
+<?php namespace App\Controllers;
+use App\Medels\UserModel;
+class User extends BaseController
+{
+
+	public function index()
+	{
+		helper(['form']);
+		$data = [];
+
+		if($this->request->getMethod() == 'post') 
+		{
+			$rules = [
+				'email' =>'required|alpha_numeric|valid_email',
+				'password' => 'required|alpha_numeric_punct',
+			];
+
+			$errors = [
+				'password' => [
+					// 'validateUser' => 'Email or Password don't match'
+				]
+			];
+
+			if(! $this->validate($rules))
+			{
+				$data['validation'] = $this->validator;
+				
+			}else{
+				
+				$model = new UserMedel();
+
+				// $newsData = [
+				// 	'email' => $this->request->getVar('email'),
+				// 	'password' => $this->request->getVar('password'),
+				// 	'address' => $this->request->getVar('address'),
+				// 	'role' => $this->request->getVar('role'),
+				// ];
+				// $model->save($newsData);
+				// $session = session();
+				// $session ->setFlashdata('success', 'Successful Registration');
+				// return redirect()->to('/');
+			}	
+		}
+
+		return view('auths/login');
+	}
+
+	public function register() 
+	{
+		helper(['form']);
+		$data = [];
+
+		if($this->request->getMethod() == 'post') 
+		{
+			// do the validation
+			$rules = [
+				'email' =>'required|alpha_numeric|valid_email',
+				'password' => 'required|alpha_numeric_punct',
+				'address' => 'required',
+				'role' => 'required',
+			];
+
+			if(! $this->validate($rules))
+			{
+				$data['validation'] = $this->validator;
+				
+			}else{
+				
+				$model = new UserMedel();
+				// insert to database
+				$newsData = [
+					'email' => $this->request->getVar('email'),
+					'password' => $this->request->getVar('password'),
+					'address' => $this->request->getVar('address'),
+					'role' => $this->request->getVar('role'),
+				];
+				$model->save($newsData);
+				$session = session();
+				$session ->setFlashdata('success', 'Successful Registration');
+				return redirect()->to('/');
+			}	
+		}
+		return view('auths/register');
+	}
+
+}
+
+=================================================================================
+Peperoni.php
+<?php namespace App\Controllers;
+use App\Medels\PeperoniModel;
+class Peperoni extends BaseController
+{
+    public function pizza()
+	{
+		helper(['form']);
+		$data = [];
+		// $data = [
+		// 	"name" => "Pizzaa banan",
+		// 	"price" => 20,
+		// 	"ingredient" => "tomato, age, chess"
+		// ];
+		// $pizzaModel = new PeperoniModel();
+		// 	$pizzaModel->insert($data);
+		// 	$dataPizza['pizzas'] = $pizzaModel->findAll();
+			// return view('index',$dataPizza);
+
+
+		if($this->request->getMethod() == 'post') 
+		{
+			// do the validation
+			$rules = [
+				'name' => 'required|alpha_numeric',
+				// 'ingredient'=>'required',
+				'price'=>'required|min_length[1]|max_length[50]|numeric',				
+			];
+			if($this->validate($rules)) // check rules
+			{
+			// insert to database
+			$peperoni = new PeperoniModel();
+			
+			$name = $this->request->getVar('name');
+			$price = $this->request->getVar('price')."$";			
+			$ingredient = $this->request->getVar('ingredient');
+			
+			$peperoniData = array(
+				'name' => $name,
+				'price' => $price,
+				'ingredient' => $ingredient,
+			);
+
+			$peperoni->insert($peperoniData);
+			return redirect()->to('/signin');	
+			
+			}else{
+				$data['validation'] = $this->validator;			}	
+		}
+		return view('index',$data);
+	}
+		
+}
+
+=====================================================================
+insert 
+// $data = [
+		// 	"name" => "Pizzaa banan",
+		// 	"price" => 20,
+		// 	"ingredient" => "tomato, age, chess"
+		// ];
+		// $pizzaModel = new PeperoniModel();
+		// 	$pizzaModel->insert($data);
+		// 	$dataPizza['pizzas'] = $pizzaModel->findAll();
+			// return view('index',$dataPizza);
+
+===========================================================================
+
+User.php
+$dataModel = new UserMedel();
+				// insert to database
+				$email = $this->request->getVar('email');
+				$password = $this->request->getVar('password');
+				$address = $this->request->getVar('address');
+				$address = $this->request->getVar('role');
+				$dateRegister = array(
+					'email' => $email,
+					'password' => $password,
+					'address' => $address,
+					'role' => $role
+				);
+				// $session = session();
+				// $session ->setFlashdata('success', 'Successful Registration');
+
+				$dataModel->createRegister($dateRegister);
+				return redirect()->to('/');
+	=====================================================================
+UserModel.php
+public function createRegister($registerInfo)
+    {
+        $this->insert([
+                'email'=> $register['email'],
+                'password'=> password_hash($registerInfo['password'], PASSWORD_DEFAULT),
+                'address'=> $registerInfo['address'],
+                'role' => $registerInfo['role'],
+        ]);
+    }			

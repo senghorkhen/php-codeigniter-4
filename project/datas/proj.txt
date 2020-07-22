@@ -1,0 +1,121 @@
+							project
+====================user.php========================
+<?php namespace App\Controllers;
+use App\Medels\UserModel;
+class User extends BaseController
+{
+	public function index()
+	{
+		$data = [];
+		helper(['fomr']);
+
+
+		return view('auths/login');
+	}
+
+	public function register() 
+	{
+		$data = [];
+		helper(['fomr']);
+
+		if($this->request->getMethod() == post) {
+			// do the validation
+			$rules = [
+			'email' =>'required|valid_email|min_length[6]|max_length[50]',
+			'password' => 'required|min_length[8]|max_length[255]',
+			'address' => 'required|alpha_numeric|min_length[3]|max_length[20]'
+			];
+
+			if(! $this->validate($rules)){
+				$data['validation'] = $this->validator;
+			}else {
+				$model = new UserModel();
+				$newData = [
+					'email' => $this->request->getVar('email'),
+					'password' => $this->request->getVar('password'),
+					'address' => $this->request->getVar('address'),
+				];
+				$model->save($newData);
+			}
+			return view('auths/register');
+		}
+		
+	}
+
+=====================================UserModel.php===========================
+<?php namespace App\Models;
+use CodeIgniter\Model;
+class UserModel extends Model
+{
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    protected $returnType = 'array';
+    protected $allowedFields = ['email', 'password', 'address'];
+
+    protected $beforeInsert = ['beforeInster'];
+    protected $beforeUpdate = ['beforeUpdate'];
+
+    protected function beforeInsert(array $data) {
+        $data = $this->passwordHash($data);
+        return $data;
+    }
+
+    protected function beforeUpdate(array $data) {
+        return $data;
+    }
+
+    protected function passwordHash(array $data) {
+        if(!isset($data['data']['password']))
+        $data['data']['password'] = password_hash($data['data']['password']. PASSWORD_DEFAULT);
+        return $data;
+    }
+}
+
+=======================================================
+value="<?= set_value('email') ?>"
+value="<?= set_value('address') ?>"
+ value="<?= set_value('email') ?>"
+===========================================================
+value="<?= $registerForm['email'] ?>"
+value="<?= $registerForm['password'] ?>"
+value="<?= $registerForm['address'] ?>"
+=================================================
+======flow=======
+view login click next -> view pizza
+logout back to login
+click on create account -> signup
+signup click on login to login again and click next go to view
+=================================================================
+if($this->validate($rules))
+			{
+			//insert to database
+
+			$registerForm = new UserModel();
+				
+				$email = $this->request->getVar('email');
+				$password = $this->request->getVar('password');
+				$address = $this->request->getVar('address');
+				$registerData = array(
+					'email'=>$email,
+					'password'=>$password,
+					'address'=>$address
+				);
+				$registerForm->insert($registerData);
+				return redirect()->to('/signup');
+
+			}else {
+				$data['messages'] = $this->validator;
+				return view('auths/register',$data);
+			}
+		}
+
+
+
+
+======================================================message=================
+  <hr>
+    <ul>
+        <?php if(isset($validation)): ?>
+            <?= $validation->listErrors() ?>
+        <?php endif ?>
+    </ul>

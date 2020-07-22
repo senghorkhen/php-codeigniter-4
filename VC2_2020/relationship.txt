@@ -1,0 +1,4 @@
+department 1 have many employee 
+leave_request 1 to many employee
+leave_type 1 to many employee
+

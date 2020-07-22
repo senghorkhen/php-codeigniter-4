@@ -1,0 +1,1 @@
+<h1>Attendance views</h1>

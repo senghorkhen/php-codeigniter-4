@@ -1,0 +1,141 @@
+<?= $this->extend('layouts/layout') ?>
+
+<?= $this->section('crud-blog') ?>
+ 
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header"><h6>Register</h6></div>
+                <div class="card-body">
+                <form action="save" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="email">Username:</label>
+                    <input type="text" class="form-control" placeholder="Enter name" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" placeholder="Enter email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" class="form-control" placeholder="Enter age" id="age" name="age">
+                </div>
+                <div class="form-group">
+                    <label for="province">Profile:</label>
+                    <input type="file" class="form-control" id="profile" name="profile">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register New</button>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+<?= $this->endSection() ?>
+======================================ah net============================================
+<?= $this->extend('layouts/layout') ?>
+
+<?= $this->section('content-blog') ?>
+<div class="container">
+   <div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+    <br>
+    <div class="card shadow-sm">
+      <div class="card-header"><h1 class="text-warning"> Register</h1></div>
+      <div class="card-body">
+            <form  action="save" method="post">
+            <div class="form-group">
+                <label for="name">Username:</label>
+                <input type="text" class="form-control" placeholder="Enter name" id="name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email address:</label>
+                <input type="email" class="form-control" placeholder="Enter email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" placeholder="Enter age" id="age" name="age">
+            </div>
+            <div class="form-group">
+                <label for="profile">Profile:</label>
+                <input type="file" class="form-control" placeholder="Enter profile" id="profile" name="profile">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Register New</button>
+            </form>
+      </div>
+    </div>
+    </div>
+    <div class="col-3"></div>
+   </div>
+</div>
+<?= $this->endSection(); ?>
+========================================ah net==============================================
+<?= $this->extend('layouts/layout') ?>
+
+<?= $this->section('content-blog') ?>
+<a href="/student/add " class="btn btn-info mt-5">Register</a>
+<h1 class="text-warning text-center"> Student Informatiom</h1>
+<hr>
+<div class="container">
+ <div class="row">
+  <div class="col-3"></div>
+  <div class="col-6 ">
+   <?php foreach($students as $student):?>
+    <div class="card">
+      <div class="card-header text-center"><?= $student['name'] ?></div> 
+      <div class="card-body">
+      <ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <?= $student['email'] ?>
+    <span class="badge badge-primary badge-pill">Email</span>
+  </li>
+  
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <?= $student['age'] ?>
+    <span class="badge badge-warning badge-pill">Age</span>
+  </li>
+
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <?= $student['profile'] ?>
+    <span class="badge badge-info badge-pill">Profile</span>
+  </li>
+</ul>
+      <hr>
+      <a href="/student/remove/<?= $student['id'] ?>"><i class="material-icons" style="color:red;">delete</i></a>
+      <a href="/student/edit/<?= $student['id'] ?>"><i class="material-icons" style="color:teal;">edit</i></a>
+   </div>
+   <?php endforeach?>
+  </div>
+  <div class="col-3"></div>
+ 
+ </div>
+</div>
+<?= $this->endSection(); ?>
+
+======================================insert=================================================
+    public function addStudent()
+	{
+		$student = new StudentModel();
+		if($this->request->getMethod() == "post")
+		{
+			$username = $this->request->getVar('name');
+			$email = $this->request->getVar('email');
+			$age = $this->request->getVar('age');
+			$profile = $this->request->getVar('profile');
+
+			$studentData = array(
+				'name'=>$username,
+				'email'=>$email,
+				'age'=>$age,
+				'profile'=>$profile
+			);
+			$student->insert($studentData);
+		}
+		return redirect()->to('/student');
+	}
